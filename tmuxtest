@@ -1,0 +1,70 @@
+# Tmux Name:              tmuxtest
+# Operating System(s):    any
+# Software Dependencies:  none
+# Description:            tmux layout (pane splits and percentage) testing
+
+# check if session exists
+
+tmux has-session -t tmuxtest
+if [ $? != 0 ]
+then
+
+# if session does not exist create it
+# note - default window numbered either 0 or 1 depending on tmux 'base-index'
+# note - my setup assumes 'base-index' was set at 1
+tmux -2 new-session -s tmuxtest -n test1 -d
+
+# create additional named windows
+# note - extra windows start at 1 or 2 and count upward depending on tmux 'base-index'
+# note - my setup assumes 'base-index' was set at 1
+tmux new-window -n test2
+tmux new-window -n test3
+tmux new-window -n test4
+tmux new-window -n test5
+tmux new-window -n test6
+tmux new-window -n test7
+tmux new-window -n test8
+tmus new-window -n test9
+
+# window 1 - random splits for testing
+# goal = configure 33percent for botton splits
+#  random | random | random
+# ==========================
+#  random | random | random
+tmux send-keys -t test1 'cd ~/' C-m
+# do the 50:50 vertical split
+tmux split-window -v -p 50 -t tmuxtest:1
+# horizontal split by 33 of the full 100 width
+tmux split-window -h -p 33 -t tmuxtest:1.1
+# now because we have a horizontal 66:33 split, just split the 66 pane in half
+tmux split-window -h -p 50 -t tmuxtest:1.1
+# and repeat for the other side
+tmux split-window -h -p 33 -t tmuxtest:1.2
+tmux split-window -h -p 50 -t tmuxtest:1.2
+
+
+# window 2 - random splits for testing
+# goal = configure 33percent for left and right splits
+#  random || random
+#  -------||--------
+#  random || random
+#  -------||--------
+#  random || random
+tmux send-keys -t test2 'cd ~/' C-m
+# do the 50:50 horizontal split
+tmux split-window -h -p 50 -t tmuxtest:2
+# vertical split by 33 of the full 100 width
+tmux split-window -v -p 33 -t tmuxtest:2.1
+# now because we have a vertical 66:33 split, just split the 66 pane in half
+tmux split-window -v -p 50 -t tmuxtest:2.1
+# and repeat for the other side
+tmux split-window -v -p 33 -t tmuxtest:2.2
+tmux split-window -v -p 50 -t tmuxtest:2.2
+
+
+# end if statements and attach tmuxtest if it existed
+fi
+tmux attach -t tmuxtest
+
+# remember to issue a kill- session command before testing updates!
+# tmux kill-session -t tmuxtest

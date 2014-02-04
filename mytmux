@@ -1,0 +1,95 @@
+# Tmux Name:              mytmux
+# Operating System(s):    Linux distros that use apt-get
+# Software Dependencies:  webserver ssh, htop, vim, git, ncdu, crawl, slurm
+# Description:            creates 10 named windows for general workday use
+
+# check if session exists
+tmux has-session -t mytmux
+if [ $? != 0 ]
+then
+
+# if session does not exist create it
+# note - default window numbered either 0 or 1 depending on tmux 'base-index'
+# note - my setup assumes 'base-index' was set at 1
+tmux -2 new-session -s mytmux -n home -d
+
+# set default directory
+tmux send-keys -t mytmux:1 'cd ~/' C-m
+
+# create additional named windows
+# note - extra windows start at 1 or 2 and count upward depending on tmux 'base-index'
+# note - my setup assumes 'base-index' was set at 1
+tmux new-window -n aws
+tmux new-window -n gcloud
+tmux new-window -n code
+tmux new-window -n todo
+tmux new-window -n status
+tmux new-window -n files
+tmux new-window -n dcss
+tmux new-window -n rss
+tmux new-window -n cmus
+tmux new-window -n random
+
+# window 1 - default window for normal use. lets make sure this starts in our home directory.
+tmux send-keys -t mytmux:1 'cd ~/' C-m
+
+# window 2 - remote aws work
+tmux send-keys -t mytmux:2 'cd ~/' C-m
+tmux send-keys -t mytmux:2 'aws help' C-m
+# replace the asw help call with your actual ssh login (don't commit this to pulic repo!)
+# tmux send-keys -t mytmux:2 'ssh user@servername' C-m
+
+# window 3 - remote gcloud work
+tmux send-keys -t mytmux:3 'cd ~/' C-m
+tmux send-keys -t mytmux:3 'gcutil help' C-m
+# replace the gcutil help call with your actual ssh login (don't commit this to pulic repo!)
+# tmux send-keys -t mytmux:3 'gcutil ssh yourservername' C-m
+
+# window 4 - cd to git project location, split window, open vim, and watch git status
+#       vim
+# =================
+#  watch | git log
+tmux send-keys -t mytmux:4 'cd ~/code/newproject' C-m
+tmux split-window -v -p 30 -t mytmux:4 
+tmux split-window -h -p 50 -t mytmux:4.2
+tmux send-keys -t mytmux:4.1 'vim myfiletoedit.txt' C-m
+tmux send-keys -t mytmux:4.2 'watch -n 15 git status' C-m
+tmux send-keys -t mytmux:4.3 'git log' C-m
+
+# window 5 - a simple todo.txt in vim Goyo mode
+tmux send-keys -t mytmux:5 'cd ~/' C-m
+tmux send-keys -t mytmux:5 'vim +Goyo ~/todo.txt' C-m
+
+# window 6 - slurm, htop (in tree mode), and system update
+# slurm  | update
+# ================
+#      htop
+tmux send-keys -t mytmux:6 'cd ~/' C-m
+tmux split-window -v -p 40 -t mytmux:6
+tmux split-window -h -p 50 -t mytmux:6.1
+tmux send-keys -t mytmux:6.1 'slurm -i mlan0' C-m
+tmux send-keys -t mytmux:6.1 'cd ~/' C-m
+tmux send-keys -t mytmux:6.2 'htop' C-m
+tmux send-keys -t mytmux:6.2 't'
+tmux send-keys -t mytmux:6.3 'cd ~/' C-m
+tmux send-keys -t mytmux:6.3 'sudo apt-get upgrade && sudo apt-get update' C-m
+
+# window 7 - file manager
+tmux send-keys -t mytmux:7 'cd ~/' C-m
+tmux send-keys -t mytmux:7 'ncdu' C-m
+
+# window 8 - because xkcd comics never lie - http://xkcd.com/303/
+tmux send-keys -t mytmux:8 'cd ~/' C-m
+tmux send-keys -t mytmux:8 'crawl' C-m
+
+# window 9 - start rss reader with refreshed feeds
+tmux send-keys -t mytmux:9 'cd ~/' C-m
+tmux send-keys -t mytmux:9 'newsbeuter -r' C-m
+
+# window 10 - start cmus music player
+tmux send-keys -t mytmux:10 'cd ~/Music' C-m
+tmux send-keys -t mytmux:10 'cmus' C-m
+
+# end if statement and attach mytmux if it existed
+fi
+tmux attach -t mytmux
