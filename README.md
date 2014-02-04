@@ -15,7 +15,7 @@ Don't you get tired of opening up your terminal and typing the same dozen or so 
 
 1. get scripts:         `git clone http://github.com/aaronhalford/tmux-scripts`
 2. go to folder:        `cd tmux-scripts`
-3. personalize scripts: `vim tmuxscriptname'
+3. personalize scripts: `vim tmuxscriptname`
 3. make executable:     `chmod +x tmuxscriptname`
 4. run script:          `./tmux-scripts/tmuxscriptname`
 
